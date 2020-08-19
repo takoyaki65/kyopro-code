@@ -22,3 +22,21 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
 }
+
+int main() {
+    long long X, K, D;
+    cin >> X >> K >> D;
+    if (X < 0) X *= -1LL;
+    long long K1 = K - X / D;
+    if (K1 < 0) {
+        cout << X - K * D << endl;
+        return 0;
+    }
+    X %= D;
+    if (K1 % 2 == 0) {
+        cout << X << endl;
+    } else {
+        cout << abs(X - D) << endl;
+    }
+    return 0;
+}
