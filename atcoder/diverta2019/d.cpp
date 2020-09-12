@@ -29,3 +29,32 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
 }
+
+// N = m * a + a = a * (m + 1)
+// (0 <= a < m)
+
+void divisor(long long n, vector<long long> &ret) {
+    for (long long i = 1; i * i <= n; ++i) {
+        if (n % i == 0) {
+            ret.push_back(i);
+            if (i * i != n) ret.push_back(n / i);
+        }
+    }
+    // sort(ret.begin(), ret.end());
+    return;
+}
+
+int main() {
+    long long N;
+    cin >> N;
+    long long res = 0LL;
+    vector<long long> div;
+    divisor(N, div);
+    for (long long m_1 : div) {
+        long long m = m_1 - 1;
+        if (m <= 0) continue;
+        if (N / m_1 < m) res += m;
+    }
+    cout << res << endl;
+    return 0;
+}
