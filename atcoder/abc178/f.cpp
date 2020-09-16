@@ -32,8 +32,9 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 
 // 同じ数の整数がN+1個以上あると無理
 // そうでないならうまくできそう
-// 構築方法
-// どれから決める? -> 使える場所が少ない数から決めていく
+// 構築方法わからｎ、、
+
+const int MAX_N = 200010;
 
 int main() {
     int N;
@@ -41,11 +42,49 @@ int main() {
     vector<int> A(N), B(N);
     repeat(i, N) cin >> A[i];
     repeat(i, N) cin >> B[i];
-    map<int, vector<int>> vA, vB;
+    vector<int> cntA(N + 1, 0), cntB(N + 1, 0);
+
     repeat(i, N) {
-        vA[A[i]].push_back(i);
-        vB[B[i]].push_back(i);
+        ++cntA[A[i]], ++cntB[B[i]];
     }
+    repeat(i, N + 1) {
+        if (cntA[i] + cntB[i] > N) {
+            cout << "No" << endl;
+            return 0;
+        }
+    }
+
+    // https://scrapbox.io/procon-kirokuyou/ABC178_F_-_Contrast_(600)
+    // とにかくスワップする
+    // AとBがかぶっているところがM個あるなら、そのなかで違う組同士でBiをスワップする
+    // と、M-2個になる。その要領で、M-4, M-6, ..., 1個と減らして最後は
+    // 例外処理で減らす
+    int R = 0, L = 0;
+    repeat(i, N) {
+        if (A[i] != B[i]) continue;
+        setmax(R, i + 1);
+        while (R < N) {
+            // A[R] == B[R] かつ B[i] != B[R]なRを探す
+            if (A[R] == B[R] && B[i] != B[R]) break;
+            ++R;
+        }
+        if (R < N) {
+            swap(B[i], B[R]);
+        } else {
+            while (L < N) {
+                if (A[i] != B[L] && A[L] != B[i]) {
+                    swap(B[i], B[L]);
+                    ++L;
+                    break;
+                }
+                ++L;
+            }
+        }
+    }
+
+    cout << "Yes" << endl;
+    repeat(i, N) cout << B[i] << " ";
+    cout << endl;
 
     return 0;
 }
