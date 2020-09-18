@@ -4,7 +4,6 @@
 #include <cstring>
 #include <iomanip>
 #include <iostream>
-#include <iterator>
 #include <map>
 #include <queue>
 #include <set>
@@ -30,4 +29,27 @@ template <typename T, typename X, typename Y, typename... Zs>
 auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
+}
+
+// 2*x + 3*y + 4*z = M
+// x + y + z = N
+// y + 2*z = M - 2*N
+
+int main() {
+    int N, M;
+    cin >> N >> M;
+    for (int z = 0; z <= N && 4 * z <= M && 2 * z <= M - 2 * N; ++z) {
+        int y = M - 2 * N - 2 * z;
+        int x = N - y - z;
+        /*         cout << x << " " << y << " " << z << " "
+             << ": " << 2 * x + 3 * y + 4 * z << endl;
+ */
+        if (x < 0 || y < 0) continue;
+        if (2 * x + 3 * y + 4 * z == M) {
+            cout << x << " " << y << " " << z << endl;
+            return 0;
+        }
+    }
+    cout << "-1 -1 -1" << endl;
+    return 0;
 }
