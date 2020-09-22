@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <atcoder/math>
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -33,29 +32,22 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     return vector<decltype(cont)>(x, cont);
 }
 
-void divisor(long long n, vector<long long> &res) {
-    for (long long i = 1; i * i <= n; ++i) {
-        if (n % i == 0) {
-            res.push_back(i);
-            if (i * i != n) res.push_back(n / i);
-        }
-    }
-    sort(res.begin(), res.end());
-    return;
-}
-
 int main() {
-    long long N;
-    cin >> N;
-    vector<long long> div2N;
-    divisor(2LL * N, div2N);
-    long long res = 1e18;
-    for (auto x : div2N) {
-        auto pk = atcoder::crt({0, -1}, {x, 2LL * N / x});
-        long long k = pk.first;
-        if (k == 0) continue;
-        setmin(res, k);
+    int N, M;
+    cin >> N >> M;
+    vector<long long> V(M + 1);
+    long long sum = 0;
+    repeat(i, N) {
+        int l, r, s;
+        cin >> l >> r >> s;
+        --l;
+        V[l] += s;
+        V[r] -= s;
+        sum += s;
     }
-    cout << res << endl;
+    repeat_from(i, 1, M + 1) {
+        V[i] = V[i] + V[i - 1];
+    }
+    cout << sum - *min_element(V.begin(), V.end() - 1) << endl;
     return 0;
 }

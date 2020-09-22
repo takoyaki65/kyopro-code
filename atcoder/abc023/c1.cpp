@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <atcoder/math>
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -33,29 +32,32 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     return vector<decltype(cont)>(x, cont);
 }
 
-void divisor(long long n, vector<long long> &res) {
-    for (long long i = 1; i * i <= n; ++i) {
-        if (n % i == 0) {
-            res.push_back(i);
-            if (i * i != n) res.push_back(n / i);
-        }
-    }
-    sort(res.begin(), res.end());
-    return;
-}
-
 int main() {
-    long long N;
-    cin >> N;
-    vector<long long> div2N;
-    divisor(2LL * N, div2N);
-    long long res = 1e18;
-    for (auto x : div2N) {
-        auto pk = atcoder::crt({0, -1}, {x, 2LL * N / x});
-        long long k = pk.first;
-        if (k == 0) continue;
-        setmin(res, k);
+    int R, C, K, N;
+    cin >> R >> C >> K >> N;
+    vector<int> r(N), c(N);
+    repeat(i, N) {
+        cin >> r[i] >> c[i];
+        --r[i], --c[i];
     }
-    cout << res << endl;
+
+    map<int, int> row_cnt, col_cnt;
+    repeat(i, N) {
+        ++row_cnt[r[i]];
+        ++col_cnt[c[i]];
+    }
+    map<int, int> m;
+    repeat(i, C) m[col_cnt[i]]++;
+
+    long long ans = 0;
+    repeat(i, R) ans += m[K - row_cnt[i]];
+
+    repeat(i, N) {
+        long long d = row_cnt[r[i]] + col_cnt[c[i]];
+        if (d == K) ans--;
+        if (d == K + 1) ans++;
+    }
+
+    cout << ans << endl;
     return 0;
 }

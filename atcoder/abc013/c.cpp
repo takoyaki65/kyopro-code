@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <atcoder/math>
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -33,28 +32,25 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     return vector<decltype(cont)>(x, cont);
 }
 
-void divisor(long long n, vector<long long> &res) {
-    for (long long i = 1; i * i <= n; ++i) {
-        if (n % i == 0) {
-            res.push_back(i);
-            if (i * i != n) res.push_back(n / i);
-        }
-    }
-    sort(res.begin(), res.end());
-    return;
-}
+// (N日すべての満足度の変化) + H > 0
+// 各日について、満足度は0より大きくなければならない
+// 食いだめした方が確実にN日過ごしやすい
+// H + B*x + D*y - E(N - x - y) > 0
+// y*(D + E) + H + B*x - E*N + E*x> 0
+// y > (E*N - E*x - B*x - H)/(D + E)
 
 int main() {
-    long long N;
-    cin >> N;
-    vector<long long> div2N;
-    divisor(2LL * N, div2N);
-    long long res = 1e18;
-    for (auto x : div2N) {
-        auto pk = atcoder::crt({0, -1}, {x, 2LL * N / x});
-        long long k = pk.first;
-        if (k == 0) continue;
-        setmin(res, k);
+    long long N, H, A, B, C, D, E;
+    cin >> N >> H >> A >> B >> C >> D >> E;
+    long long res = numeric_limits<long long>::max();
+    for (long long x = 0; x <= N; ++x) {
+        int y = 0;
+        if (E * (N - x) - B * x - H < 0)
+            y = 0;
+        else
+            y = (E * (N - x) - B * x - H) / (D + E) + 1;
+        if (x + y > N || y < 0) continue;
+        setmin(res, A * x + C * y);
     }
     cout << res << endl;
     return 0;

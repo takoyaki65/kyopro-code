@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <atcoder/math>
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -33,29 +32,30 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     return vector<decltype(cont)>(x, cont);
 }
 
-void divisor(long long n, vector<long long> &res) {
-    for (long long i = 1; i * i <= n; ++i) {
-        if (n % i == 0) {
-            res.push_back(i);
-            if (i * i != n) res.push_back(n / i);
+int main() {
+    int N, K;
+    string S;
+    cin >> N >> K >> S;
+    const int M = 'z' - 'a' + 1;
+    vector<set<int>> alphabet(M);
+    repeat(i, N) alphabet[S[i] - 'a'].insert(i);
+    int err = 0;
+    repeat(i, N) {
+        if (err >= K) break;
+        repeat(j, M) {
+            if (alphabet[j].empty()) continue;
+            int k = *alphabet[j].rbegin();
+            if (S[i] != S[k] && err + 2 > K) break;
+            swap(S[i], S[k]);
+            if (S[i] != S[k]) {
+                alphabet[j].erase(k);
+                alphabet[S[i] - 'a'].insert(k);
+                err += 2;
+            }
+            alphabet[S[k] - 'a'].erase(i);
+            break;
         }
     }
-    sort(res.begin(), res.end());
-    return;
-}
-
-int main() {
-    long long N;
-    cin >> N;
-    vector<long long> div2N;
-    divisor(2LL * N, div2N);
-    long long res = 1e18;
-    for (auto x : div2N) {
-        auto pk = atcoder::crt({0, -1}, {x, 2LL * N / x});
-        long long k = pk.first;
-        if (k == 0) continue;
-        setmin(res, k);
-    }
-    cout << res << endl;
+    cout << S << endl;
     return 0;
 }
