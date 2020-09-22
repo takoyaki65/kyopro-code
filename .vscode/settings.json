@@ -35,7 +35,8 @@
         "tuple": "cpp",
         "valarray": "cpp",
         "all": "cpp",
-        "convolution": "cpp"
+        "convolution": "cpp",
+        "limits": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
