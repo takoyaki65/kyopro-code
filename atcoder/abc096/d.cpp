@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
-#include <limits>
 #include <map>
 #include <queue>
 #include <set>
@@ -31,4 +30,37 @@ template <typename T, typename X, typename Y, typename... Zs>
 auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
+}
+
+const int MAX_M = 55560;
+
+int main() {
+    int N;
+    cin >> N;
+    vector<bool> is_prime(MAX_M, true);
+    is_prime[0] = is_prime[1] = false;
+
+    for (int i = 2; i * i < MAX_M; ++i) {
+        if (is_prime[i]) {
+            for (int j = 2 * i; j < MAX_M; j += i) {
+                is_prime[j] = false;
+            }
+        }
+    }
+
+    vector<int> res;
+    int cur = 0;
+    while (res.size() < N && cur < MAX_M) {
+        while (!is_prime[cur]) cur++;
+        if (cur % 5 == 1) {
+            res.push_back(cur);
+        }
+        ++cur;
+    }
+
+    assert(res.size() == N);
+    for (int i = 0; i < N; ++i) {
+        cout << res[i] << endl;
+    }
+    return 0;
 }
