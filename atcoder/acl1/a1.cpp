@@ -55,7 +55,7 @@ int main() {
         int y = get<1>(xyi[i]);
         int ymin = y;
         int id = get<2>(xyi[i]);
-        auto it = tail.upper_bound({y, INF});
+        auto it = tail.upper_bound({y - 1, INF});
         // [tail.begin(), itr)をマージ
         auto ptr = tail.begin();
         while (ptr != it) {

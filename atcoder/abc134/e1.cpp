@@ -13,7 +13,6 @@
 #include <vector>
 #define repeat(i, n) for (int i = 0; (i) < (n); ++(i))
 #define repeat_from(i, m, n) for (int i = (m); (i) < (n); ++(i))
-#define sz(x) int(x.size())
 using namespace std;
 template <class T>
 void setmax(T &a, T const &b) {
@@ -32,4 +31,30 @@ template <typename T, typename X, typename Y, typename... Zs>
 auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
+}
+
+const int INF = 1e9 + 7;
+
+int main() {
+    int N;
+    cin >> N;
+    vector<int> A(N);
+    repeat(i, N) cin >> A[i];
+    deque<int> deq;
+    for (int i = N - 1; i >= 0; --i) {
+        int p = upper_bound(deq.begin(), deq.end(), A[i]) - deq.begin();
+        if (p == deq.size()) {
+            deq.push_back(A[i]);
+        } else {
+            deq[p] = A[i];
+        }
+
+        // for (int p : deq) {
+        //     cout << p << " ";
+        // }
+        // cout << endl;
+    }
+    int ans = deq.size();
+    cout << ans << endl;
+    return 0;
 }

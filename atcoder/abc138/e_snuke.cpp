@@ -33,3 +33,31 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
 }
+
+int main() {
+    string s, t;
+    cin >> s >> t;
+    int n = sz(s), m = sz(t);
+    vector<vector<int>> is(26);
+    repeat(i, n) is[s[i] - 'a'].push_back(i);
+    repeat(i, n) is[s[i] - 'a'].push_back(i + n);
+
+    long long ans = 0;
+    int p = 0;
+    repeat(i, m) {
+        int c = t[i] - 'a';
+        if (sz(is[c]) == 0) {
+            cout << -1 << endl;
+            return 0;
+        }
+        p = *lower_bound(is[c].begin(), is[c].end(), p) + 1;
+        if (p >= n) {
+            p -= n;
+            ans += n;
+        }
+    }
+    ans += p;
+    cout << ans << endl;
+
+    return 0;
+}

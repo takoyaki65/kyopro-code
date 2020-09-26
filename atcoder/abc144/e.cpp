@@ -33,3 +33,34 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
 }
+
+int main() {
+    int N;
+    long long K;
+    cin >> N >> K;
+    vector<int> A(N);
+    vector<int> F(N);
+    repeat(i, N) cin >> A[i];
+    repeat(i, N) cin >> F[i];
+    sort(A.begin(), A.end());
+    sort(F.rbegin(), F.rend());
+
+    auto f = [&](long long mid) -> bool {
+        long long x = 0;
+        repeat(i, N) {
+            x += max(0LL, (long long)A[i] - mid / F[i]);
+        }
+        return x <= K;
+    };
+
+    long long ng = -1, ok = 1e12 + 1000;
+    while (abs(ok - ng) > 1) {
+        long long mid = ng + (ok - ng) / 2;
+        if (f(mid))
+            ok = mid;
+        else
+            ng = mid;
+    }
+    cout << ok << endl;
+    return 0;
+}
