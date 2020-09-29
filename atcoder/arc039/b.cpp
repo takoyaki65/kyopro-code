@@ -1,8 +1,39 @@
-#include <bits/stdc++.h>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <cstring>
+#include <iomanip>
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <map>
+#include <queue>
+#include <set>
+#include <stack>
+#include <vector>
+#define repeat(i, n) for (int i = 0; (i) < (n); ++(i))
+#define repeat_from(i, m, n) for (int i = (m); (i) < (n); ++(i))
+#define sz(x) int(x.size())
 using namespace std;
+template <class T>
+void setmax(T& a, T const& b) {
+    if (a < b) a = b;
+}
 
-//const int mod = 1000000007;
-const int mod = 998244353;
+template <class T>
+void setmin(T& a, T const& b) {
+    if (a > b) a = b;
+}
+
+template <typename T, typename X>
+auto vectors(T a, X x) { return vector<T>(x, a); }
+
+template <typename T, typename X, typename Y, typename... Zs>
+auto vectors(T a, X x, Y y, Zs... zs) {
+    auto cont = vectors(a, y, zs...);
+    return vector<decltype(cont)>(x, cont);
+}
+
 template <typename T, T MOD = 1000000007>
 struct Mint {
     static constexpr T mod = MOD;
@@ -98,3 +129,17 @@ struct combination {
         return fact[n] * ifact[k] * ifact[n - k];
     }
 };
+
+using Int = Mint<long long>;
+using Cmb = combination<long long>;
+
+int main() {
+    int N, K;
+    cin >> N >> K;
+    if (N > K) {
+        cout << Cmb(N + K)(N + K - 1, K) << endl;
+    } else {
+        cout << Cmb(N)(N, K % N) << endl;
+    }
+    return 0;
+}
