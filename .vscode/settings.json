@@ -39,7 +39,8 @@
         "limits": "cpp",
         "math": "cpp",
         "cstring": "cpp",
-        "modint": "cpp"
+        "modint": "cpp",
+        "array": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
