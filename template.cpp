@@ -16,18 +16,26 @@
 using namespace std;
 
 template <class T>
-int sz(T &x) {
+inline int sz(T &x) {
     return x.size();
 }
 
 template <class T>
-void setmax(T &a, T const &b) {
-    if (a < b) a = b;
+inline bool setmax(T &a, T b) {
+    if (a < b) {
+        a = b;
+        return true;
+    }
+    return false;
 }
 
 template <class T>
-void setmin(T &a, T const &b) {
-    if (a > b) a = b;
+inline void setmin(T &a, T b) {
+    if (a > b) {
+        a = b;
+        return true;
+    }
+    return false;
 }
 
 template <typename T, typename X>
