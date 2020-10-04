@@ -46,3 +46,23 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
 }
+
+int main() {
+    int N;
+    cin >> N;
+    vector<int> A(N);
+    repeat(i, N) cin >> A[i];
+    long long res = 0;
+    repeat(i, N) {
+        res += A[i] / 2;
+        A[i] %= 2;
+        if (i + 1 < N) {
+            if (A[i] == 1 && A[i + 1] >= 1) {
+                ++res;
+                --A[i], --A[i + 1];
+            }
+        }
+    }
+    cout << res << endl;
+    return 0;
+}
