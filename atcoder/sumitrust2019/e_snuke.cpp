@@ -107,95 +107,26 @@ struct Fp {
     }
 };
 
-template <class T>
-struct BiCoef {
-    vector<T> fact_, inv_, finv_;
-    constexpr BiCoef() {}
-    constexpr BiCoef(int n) noexcept : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
-        init(n);
-    }
-    constexpr void init(int n) noexcept {
-        fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
-        int MOD = fact_[0].getmod();
-        for (int i = 2; i < n; ++i) {
-            fact_[i] = fact_[i - 1] * i;
-            inv_[i] = -inv_[MOD % i] * (MOD / i);
-            finv_[i] = finv_[i - 1] * inv_[i];
-        }
-    }
-    constexpr T com(int n, int k) const noexcept {
-        if (n < k || n < 0 || k < 0) return 0;
-        return fact_[n] * finv_[k] * finv_[n - k];
-    }
-    constexpr T fact(int n) const noexcept {
-        if (n < 0) return 0;
-        return fact_[n];
-    }
-    constexpr T inv(int n) const noexcept {
-        if (n < 0) return 0;
-        return inv_[n];
-    }
-    constexpr T finv(int n) const noexcept {
-        if (n < 0) return 0;
-        return finv_[n];
-    }
-};
-
 const int MOD = 1000000007;
 using mint = Fp<MOD>;
 
 int main() {
-    int H, W;
-    cin >> H >> W;
-    vector<string> S(H);
-    repeat(i, H) cin >> S[i];
-    auto A = vectors(0, H, W);
-    repeat(i, H) {
-        int num = 0;
-        repeat(j, W) {
-            if (S[i][j] == '#') {
-                num = 0;
-                continue;
-            }
-            if (num == 0) {
-                assert(j == 0 or S[i][j - 1] == '#');
-                int cur = j;
-                while (cur < W and S[i][cur++] == '.') ++num;
-            }
-            A[i][j] += num;
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    repeat(i, n) cin >> a[i];
+    vector<int> c(n + 1);
+    c[0] = 3;
+    mint ans = 1;
+    repeat(i, n) {
+        if (!c[a[i]]) {
+            cout << 0 << endl;
+            return 0;
         }
+        ans *= c[a[i]];
+        c[a[i]]--;
+        c[a[i] + 1]++;
     }
-    repeat(j, W) {
-        int num = 0;
-        repeat(i, H) {
-            if (S[i][j] == '#') {
-                num = 0;
-                continue;
-            }
-            if (num == 0) {
-                assert(i == 0 or S[i - 1][j] == '#');
-                int cur = i;
-                while (cur < H and S[cur++][j] == '.') ++num;
-            }
-            A[i][j] += num - 1;
-        }
-    }
-    int K = 0;
-    repeat(i, H) repeat(j, W) if (S[i][j] == '.')++ K;
-    auto pow2 = vectors(mint(0), K + 1);
-    pow2[0] = 1;
-    repeat_from(i, 1, K + 1) {
-        pow2[i] = pow2[i - 1] * 2;
-    }
-
-    mint res = 0;
-    repeat(i, H) {
-        repeat(j, W) {
-            if (A[i][j] != 0) {
-                res += (pow2[A[i][j]] - 1) * pow2[K - A[i][j]];
-            }
-        }
-    }
-    cout << res << endl;
+    cout << ans << endl;
     return 0;
 }
