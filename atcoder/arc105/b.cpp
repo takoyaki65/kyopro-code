@@ -2,7 +2,6 @@
 #include <cassert>
 #include <cmath>
 #include <cstring>
-#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
@@ -46,4 +45,15 @@ template <typename T, typename X, typename Y, typename... Zs>
 auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
+}
+
+int main() {
+    int N;
+    cin >> N;
+    vector<int> a(N);
+    repeat(i, N) cin >> a[i];
+    int res = a[0];
+    repeat(i, N) res = __gcd(res, a[i]);
+    cout << res << endl;
+    return 0;
 }
