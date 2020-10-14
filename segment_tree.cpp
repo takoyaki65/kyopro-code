@@ -15,9 +15,9 @@ struct SegmentTree {
     SegmentTree(vector<T> v, T _e) : e(_e) {
         int sz = v.size();
         n = 1;
-        whlie(n < sz) n *= 2;
+        while (n < sz) n *= 2;
         node.resize(2 * n - 1, e);
-        for (int i = 0; i < sz; ++i) node[i + n - 1] = a[i];
+        for (int i = 0; i < sz; ++i) node[i + n - 1] = v[i];
         for (int i = n - 2; i >= 0; --i) node[i] = f(node[2 * i + 1], node[2 * i + 2]);
     }
 

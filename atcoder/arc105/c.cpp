@@ -8,6 +8,7 @@
 #include <iterator>
 #include <limits>
 #include <map>
+#include <numeric>
 #include <queue>
 #include <set>
 #include <stack>
@@ -48,56 +49,6 @@ auto vectors(T a, X x, Y y, Zs... zs) {
     return vector<decltype(cont)>(x, cont);
 }
 
-template <typename T>
-struct SegmentTree {
-    using F = function<T(T, T)>;
-
-   private:
-    int n;
-    vector<T> node;
-    F f;
-    T e;
-
-   public:
-    SegmentTree(vector<T> v, T _e, F _f) : e(_e), f(_f) {
-        int sz = v.size();
-        n = 1;
-        whlie(n < sz) n *= 2;
-        node.resize(2 * n - 1, e);
-        for (int i = 0; i < sz; ++i) node[i + n - 1] = a[i];
-        for (int i = n - 2; i >= 0; --i) node[i] = f(node[2 * i + 1], node[2 * i + 2]);
-    }
-
-    void update(int x, T val) {
-        x += (n - 1);
-
-        node[x] = val;
-        while (x > 0) {
-            x = (x - 1) / 2;
-            node[x] = f(node[2 * x + 1], node[2 * x + 2]);
-        }
-    }
-
-    T get(int pos) {
-        return node[pos + n - 1];
-    }
-
-    // 区間[a, b)の結合
-    // k := 自分がいるノードのインデックス
-    // [l, r) := ノードkに対応する区間
-    T query(int a, int b, int k = 0, int l = 0, int r = -1) {
-        if (r < 0) r = n;
-
-        if (r <= a || b <= l) return e;
-
-        if (a <= l && r <= b) return node[k];
-
-        T vl = query(a, b, 2 * k + 1, l, (l + r) / 2);
-        T vr = query(a, b, 2 * k + 2, (l + r) / 2, r);
-        return f(vl, vr);
-    }
-};
-
 int main() {
     int N, M;
     cin >> N >> M;
@@ -119,20 +70,55 @@ int main() {
         }
     }
 
-    vector<int> v(M);
-    repeat(i, M) {
-        v[i] = vl[i].first;
-    }
-    SegmentTree<int> sgtree(v, -1, [](int l, int r) -> int { return max(l, r); });
-
-    auto tbl = vectors(0, N, N);
-    repeat(i, N) {
-        repeat_from(j, i + 1, N) {
-            // i ~ jの最小距離
-            int ws = w[i] + w[j];
-            // 耐荷重がws未満になる橋のなかで最も長さが長いものを探したい。
+    vector<pair<int, int>> border;
+    border.emplace_back(0, 0);
+    {
+        int maxL = 0;
+        int cur = 0;
+        while (cur < M) {
+            int L = vl[cur].second;
+            int barV = vl[cur].first;
+            while (++cur < M and vl[cur].first == barV) {
+                setmax(L, vl[cur].second);
+            }
+            if (maxL < L) {
+                border.emplace_back(barV, L);
+                maxL = L;
+            }
         }
     }
+    /*     for (auto bvl : border) {
+        cout << bvl.first << " : " << bvl.second << endl;
+    }
+ */
+    int res = numeric_limits<int>::max();
+    vector<int> perm(N);
+    iota(begin(perm), end(perm), 0);
+    do {
+        vector<int> d(N);
+        repeat(j, N) {
+            repeat(i, j) {
+                int ws = 0;
+                repeat_from(k, i, j + 1) ws += w[perm[k]];
 
+                // ws未満
+                int it = lower_bound(begin(border), end(border), make_pair(ws, -1)) - begin(border);
+                assert(it - 1 >= 0);
+                int minL = border[it - 1].second;
+                //cout << i << " -> " << j << " ws: " << ws << " minL: " << minL << endl;
+                setmax(d[j], d[i] + minL);
+            }
+        }
+        /*         
+        repeat(i, N) cout << perm[i] << " -> ";
+        cout << endl;
+        cout << "d: ";
+        repeat(i, N) cout << d[i] << " ";
+        cout << endl; 
+        */
+        setmin(res, d[N - 1]);
+    } while (next_permutation(begin(perm), end(perm)));
+
+    cout << res << endl;
     return 0;
 }
