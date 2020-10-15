@@ -44,7 +44,7 @@ void solve() {
 
     repeat(i, M) {
         // [l, r)のk番目の数を求める
-        int l = I[i], r = J[i] + 1, k = K[i];
+        int l = I[i] - 1, r = J[i], k = K[i];
 
         int lb = -1, ub = N - 1;
         while (ub - lb > 1) {
@@ -83,7 +83,6 @@ int main() {
     repeat(i, N) cin >> A[i];
     repeat(i, M) {
         cin >> I[i] >> J[i] >> K[i];
-        --I[i], --J[i];
     }
     solve();
     return 0;
