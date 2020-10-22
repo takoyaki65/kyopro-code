@@ -2,7 +2,6 @@
 #include <cassert>
 #include <cmath>
 #include <cstring>
-#include <deque>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -48,4 +47,19 @@ template <typename T, typename X, typename Y, typename... Zs>
 auto vectors(T a, X x, Y y, Zs... zs) {
     auto cont = vectors(a, y, zs...);
     return vector<decltype(cont)>(x, cont);
+}
+
+int main() {
+    int N, M;
+    while (cin >> N >> M, N | M) {
+        int cap = M / N;
+        int res = 0;
+        while (N--) {
+            int A;
+            cin >> A;
+            res += min(cap, A);
+        }
+        cout << res << endl;
+    }
+    return 0;
 }
