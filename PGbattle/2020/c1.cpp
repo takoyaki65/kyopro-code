@@ -61,11 +61,11 @@ int main() {
 
     int x = sx, y = sy;
     int cnt = 0;
-    // dir = 0(左向いている)にしてしまってWA
-    // それ以外もミスあった。状態数は(現在いる位置)だけでなく、(現在いる位置 + 向いている方向)
     int dir = 1;
-    auto used = vectors(false, H, W, 4);
-    used[sx][sy][dir] = true;
+    // (位置, 向き)の状態数は 4*H*W通り
+    // 前回たどった状態(位置、向き)と同じ状態に戻ったら無限ループしていることになるので、そこで打ち切り
+    // 鳩ノ巣原理
+    long long max_cnt = 4LL * H * W + 100;
     const int dx[] = {0, -1, 0, 1};
     const int dy[] = {-1, 0, 1, 0};
     while (true) {
@@ -87,14 +87,14 @@ int main() {
         y = ny;
         //cout << "x: " << x << " y: " << y << endl;
         dir = (dir + nxt) % 4;
-        if (used[x][y][dir]) {
-            cout << -1 << endl;
-            return 0;
-        }
-        used[x][y][dir] = true;
         ++cnt;
         if (x == gx and y == gy) {
             cout << cnt << endl;
+            return 0;
+        }
+        --max_cnt;
+        if (max_cnt < 0) {
+            cout << -1 << endl;
             return 0;
         }
     }
