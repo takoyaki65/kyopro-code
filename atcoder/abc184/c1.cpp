@@ -55,47 +55,36 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 int main() {
   long long sx, sy, gx, gy;
   cin >> sx >> sy >> gx >> gy;
-  long long ans = 0;
   if (sx == gx and sy == gy) {
     cout << 0 << endl;
     return 0;
   }
+
   if ((sx - sy == gx - gy) or (sx + sy == gx + gy) or
       abs(sx - gx) + abs(sy - gy) <= 3) {
     cout << 1 << endl;
     return 0;
   }
 
-  for (long long dx = -3; dx <= 3; ++dx) {
-    for (long long dy = -3; dy <= 3; ++dy) {
-      long long nx = sx + dx, ny = sy + dy;
-      if (abs(sx - nx) + abs(sy - ny) > 3LL) continue;
-      if (abs(nx - gx) + abs(ny - gy) <= 3LL) {
-        cout << 2 << endl;
-        return 0;
-      }
-    }
+  if ((sx + sy + gx + gy) % 2 == 0) {
+    cout << 2 << endl;
+    return 0;
   }
 
-  // cout << "else,,," << endl;
-
-  if (abs(sx - sy + gx + gy) % 2LL == 0LL or
-      abs(sx + sy + gx - gy) % 2LL == 0LL) {
-    ans = 2;
-  } else {
-    // cout << "else,,," << endl;
-    for (long long dx = -3; dx <= 3; ++dx) {
-      for (long long dy = -3; dy <= 3; ++dy) {
-        long long nx = gx + dx, ny = gy + dy;
-        if (abs(gx - nx) + abs(gy - ny) > 3LL) continue;
-        if (sx - sy == nx - ny or sx + sy == nx + ny) {
-          cout << 2 << endl;
-          return 0;
-        }
-      }
-    }
-    ans = 3;
+  if (abs(sx - gx) + abs(sy - gy) <= 6) {
+    cout << 2 << endl;
+    return 0;
   }
-  cout << ans << endl;
+
+  if (abs((sx + sy) - (gx + gy)) <= 3) {
+    cout << 2 << endl;
+    return 0;
+  }
+
+  if (abs((sx - sy) - (gx - gy)) <= 3) {
+    cout << 2 << endl;
+    return 0;
+  }
+  cout << 3 << endl;
   return 0;
 }
