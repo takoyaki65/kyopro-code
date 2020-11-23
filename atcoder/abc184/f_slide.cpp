@@ -52,6 +52,20 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+vector<long long> partial_sum_enum(const vector<long long> &vec) {
+  int num = vec.size();
+  vector<long long> ret;
+  ret.reserve((1 << num) + 1);
+  ret.push_back(0);
+  for (const long long &val : vec) {
+    int cur_size = ret.size();
+    for (int i = 0; i < cur_size; ++i) {
+      ret.push_back(ret[i] + val);
+    }
+  }
+  return ret;
+}
+
 int main() {
   long long num = 0;
   long long max_time = 0;
@@ -62,33 +76,18 @@ int main() {
   copy(a_vec.begin(), a_vec.begin() + (num / 2), back_inserter(left_vec));
   copy(a_vec.begin() + (num / 2), a_vec.end(), back_inserter(right_vec));
 
-  vector<long long> left_enum;
-  left_enum.reserve((1 << (num / 2)) + 1);
-  {
-    int l_size = left_vec.size();
-    left_enum.push_back(0);
-    for (int bits = 0; bits < (1 << l_size); ++bits) {
-      long long sm = 0;
-      repeat(i, l_size) {
-        if ((bits >> i) & 1) sm += left_vec[i];
-      }
-      left_enum.push_back(sm);
-    }
-    sort(left_enum.begin(), left_enum.end());
-  }
+  auto left_enum = partial_sum_enum(left_vec);
+  auto right_enum = partial_sum_enum(right_vec);
+  sort(left_enum.begin(), left_enum.end());
+  sort(right_enum.rbegin(), right_enum.rend());
 
   long long ans = -1;
-  int r_size = right_vec.size();
-  for (int bits = 0; bits < (1 << r_size); ++bits) {
-    long long sm = 0;
-    repeat(i, r_size) {
-      if ((bits >> i) & 1) sm += right_vec[i];
-    }
-
-    if (sm > max_time) continue;
-    long long rest =
-        *prev(upper_bound(left_enum.begin(), left_enum.end(), max_time - sm));
-    setmax(ans, sm + rest);
+  int r = 0;
+  for (int l = 0; l < left_enum.size(); ++l) {
+    if (left_enum[l] > max_time) continue;
+    while (r < right_enum.size() and left_enum[l] + right_enum[r] > max_time)
+      ++r;
+    setmax(ans, left_enum[l] + right_enum[r]);
   }
   cout << ans << endl;
   return 0;
