@@ -51,3 +51,36 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   auto cont = vectors(a, y, zs...);
   return vector<decltype(cont)>(x, cont);
 }
+
+// combination(L-1, 11)
+
+int main() {
+  int n{0}, m{0};
+  cin >> n >> m;
+  vector<int> va(m+1);
+  for(int i = 0; i < m; ++i) {
+    cin >> va[i];
+    --va[i];
+  }
+  va[m] = n;
+  sort(va.begin(), va.end());
+  vector<int> vpan;
+  vpan.reserve(m);
+  {
+    int pa{0};
+    for(int i = 0; i < m+1; ++i) {
+      int a = va[i];
+      if(a - pa > 0) vpan.push_back(a - pa);
+      pa = a + 1;
+    }
+  }
+
+  int width = *min_element(vpan.begin(), vpan.end());
+  int num{0};
+  for(const int &pan : vpan) {
+    //cout << "pan: " << pan << endl;
+    num += (pan + width - 1) / width;
+  }
+  cout << num << endl;
+  return 0;
+}

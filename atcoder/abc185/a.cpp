@@ -51,3 +51,11 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   auto cont = vectors(a, y, zs...);
   return vector<decltype(cont)>(x, cont);
 }
+
+int main() {
+  int a1{}, a2{}, a3{}, a4{};
+  cin >> a1 >> a2 >> a3 >> a4;
+  vector<int> vec = {a1, a2, a3, a4};
+  cout << *min_element(vec.begin(), vec.end()) << endl;
+  return 0;
+}

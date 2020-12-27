@@ -51,3 +51,32 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   auto cont = vectors(a, y, zs...);
   return vector<decltype(cont)>(x, cont);
 }
+
+// a*k + ceil(a/2) ~ a*k + a - 1
+// である必要がある．
+// a > (x mod a) >= ceil(a/2)
+
+// a = 1  :   1 > 0 >= 1  : ×
+// a = 2  :   2 > (0 or 1)  >= 1  : x mod a == 1である必要がある
+// a = 3  :   3 > (0 ~ 2) >= 2    : x mod a == 2である必要がある
+// a = 10 :  10 > (0 ~ 9) >= 5    : x mod a = 5 ~ 9である必要がある
+
+int main() {
+  int t;
+  cin >> t;
+  while (t--) {
+    int l, r;
+    cin >> l >> r;
+    for (int k = 1; k <= 1000; ++k) {
+      bool flg = true;
+      for (int c = l; c <= r; ++c) {
+        if (c % k < (k + 1) / 2) {
+          flg = false;
+          break;
+        }
+      }
+      if (flg) cout << k << endl;
+    }
+  }
+  return 0;
+}

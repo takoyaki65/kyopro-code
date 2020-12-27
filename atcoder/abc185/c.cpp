@@ -51,3 +51,17 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   auto cont = vectors(a, y, zs...);
   return vector<decltype(cont)>(x, cont);
 }
+
+// combination(L-1, 11)
+
+int main() {
+  long long l{0};
+  cin >> l;
+  long long ans{1};
+  for(long long c = 1; c <= 11LL; ++c) {
+    ans *= (l - c);
+    ans /= c;
+  }
+  cout << ans << endl;
+  return 0;
+}
