@@ -4,7 +4,6 @@
 #include <cstring>
 #include <deque>
 #include <functional>
-#include <initializer_list>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
@@ -51,4 +50,30 @@ template <typename T, typename X, typename Y, typename... Zs>
 auto vectors(T a, X x, Y y, Zs... zs) {
   auto cont = vectors(a, y, zs...);
   return vector<decltype(cont)>(x, cont);
+}
+
+int main() {
+  int n, x;
+  cin >> n >> x;
+  int alchol = 0;
+  const int max_alchol = x * 100;
+  int ans = 0;
+  for (int d = 1; d <= n; ++d) {
+    int v, p;
+    cin >> v >> p;
+    alchol += v * p;
+    if (ans == 0) {
+      if (alchol > max_alchol)
+        ans = d;
+    } else {
+      // do nothing
+    }
+  }
+
+  if (ans == 0) {
+    cout << -1 << endl;
+  } else {
+    cout << ans << endl;
+  }
+  return 0;
 }

@@ -40,7 +40,13 @@
         "math": "cpp",
         "cstring": "cpp",
         "modint": "cpp",
-        "array": "cpp"
+        "array": "cpp",
+        "initializer_list": "cpp",
+        "any": "cpp",
+        "new": "cpp",
+        "stdexcept": "cpp",
+        "variant": "cpp",
+        "type_traits": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

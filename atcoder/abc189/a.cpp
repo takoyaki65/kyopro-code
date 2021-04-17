@@ -4,7 +4,6 @@
 #include <cstring>
 #include <deque>
 #include <functional>
-#include <initializer_list>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
@@ -51,4 +50,15 @@ template <typename T, typename X, typename Y, typename... Zs>
 auto vectors(T a, X x, Y y, Zs... zs) {
   auto cont = vectors(a, y, zs...);
   return vector<decltype(cont)>(x, cont);
+}
+
+int main() {
+  char str[5];
+  cin >> str;
+  if (str[0] == str[1] && str[1] == str[2]) {
+    cout << "Won" << endl;
+  } else {
+    cout << "Lost" << endl;
+  }
+  return 0;
 }

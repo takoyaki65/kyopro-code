@@ -4,7 +4,6 @@
 #include <cstring>
 #include <deque>
 #include <functional>
-#include <initializer_list>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
