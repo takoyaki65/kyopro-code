@@ -54,5 +54,18 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 }
 
 int main() {
+  int n, s, d;
+  cin >> n >> s >> d;
+  int ans = 0;
+  while (n--) {
+    int x, y;
+    cin >> x >> y;
+    if (x < s && y > d)
+      ++ans;
+  }
+  if (ans)
+    cout << "Yes" << endl;
+  else
+    cout << "No" << endl;
   return 0;
 }

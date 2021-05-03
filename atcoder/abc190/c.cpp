@@ -53,6 +53,44 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+const int MAX_N = 110;
+int dish[MAX_N];
+
 int main() {
+  int n, m;
+  cin >> n >> m;
+
+  vector<int> va(m), vb(m);
+  repeat(i, m) {
+    cin >> va[i] >> vb[i];
+    --va[i], --vb[i];
+  }
+  int k;
+  cin >> k;
+  vector<int> vc(k), vd(k);
+  repeat(i, k) {
+    cin >> vc[i] >> vd[i];
+    --vc[i], --vd[i];
+  }
+
+  int ans = 0;
+  repeat(bit, 1 << k) {
+    memset(dish, 0, sizeof(dish));
+
+    for (int i = 0; i < k; ++i) {
+      if (bit & (1 << i))
+        dish[vc[i]]++;
+      else
+        dish[vd[i]]++;
+    }
+
+    int tmp = 0;
+    for (int i = 0; i < m; ++i) {
+      if (dish[va[i]] && dish[vb[i]])
+        ++tmp;
+    }
+    setmax(ans, tmp);
+    }
+  cout << ans << endl;
   return 0;
 }

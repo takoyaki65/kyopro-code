@@ -54,5 +54,16 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 }
 
 int main() {
+  long long n;
+  cin >> n;
+  long long ans = 0;
+  for (long long x = 1; x * x <= 2ll * n; ++x) {
+    if (2ll * n % x)
+      continue;
+    long long y = 2ll * n / x;
+    if (x % 2 != y % 2)
+      ans += 2;
+  }
+  cout << ans << endl;
   return 0;
 }
