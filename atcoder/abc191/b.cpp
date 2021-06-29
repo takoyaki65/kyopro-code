@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -55,5 +54,22 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 }
 
 int main() {
+  int n, x;
+  cin >> n >> x;
+  vector<int> vb;
+  vb.reserve(n);
+  repeat(i, n) {
+    int a;
+    cin >> a;
+    if (a == x) {
+      // do nothing
+    } else {
+      vb.push_back(a);
+    }
+  }
+  for (int b : vb) {
+    cout << b << " ";
+  }
+  cout << endl;
   return 0;
 }

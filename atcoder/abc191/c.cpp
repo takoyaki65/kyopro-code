@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -55,5 +54,20 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 }
 
 int main() {
+  int h, w;
+  cin >> h >> w;
+  vector<string> grid(h);
+  repeat(i, h) cin >> grid[i];
+  int ans = 0;
+  repeat(i, h - 1) repeat(j, w - 1) {
+    int cnt = 0;
+    repeat(di, 2) repeat(dj, 2) {
+      if (grid[i + di][j + dj] == '#')
+        ++cnt;
+    }
+    if (cnt == 1 or cnt == 3)
+      ++ans;
+  }
+  cout << ans << endl;
   return 0;
 }

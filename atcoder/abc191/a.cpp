@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -55,5 +54,13 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 }
 
 int main() {
+  int v, t, s, d;
+  cin >> v >> t >> s >> d;
+  // t <= d/v <= s
+  // t * v <= d <= s * v
+  if (t * v <= d && d <= s * v)
+    cout << "No" << endl;
+  else
+    cout << "Yes" << endl;
   return 0;
 }
