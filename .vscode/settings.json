@@ -46,7 +46,8 @@
         "new": "cpp",
         "stdexcept": "cpp",
         "variant": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "queue": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }
