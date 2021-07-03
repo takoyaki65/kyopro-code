@@ -15,7 +15,6 @@
 #include <queue>
 #include <set>
 #include <stack>
-#include <unordered_map>
 #include <vector>
 #define repeat(i, n) for (int i = 0; (i) < (n); ++(i))
 #define repeat_from(i, m, n) for (int i = (m); (i) < (n); ++(i))
@@ -56,5 +55,21 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 }
 
 int main() {
+  int n;
+  long long k;
+  cin >> n >> k;
+  vector<int> a(n), b(n);
+  repeat(i, n) cin >> a[i];
+  repeat(i, n) cin >> b[i];
+  long long dist = 0;
+  repeat(i, n) dist += abs(a[i] - b[i]);
+  k -= dist;
+  // cout << "dist: " << k << endl;
+  if (k < 0 || k % 2) {
+    cout << "No" << endl;
+  } else {
+    cout << "Yes" << endl;
+  }
+
   return 0;
 }

@@ -56,5 +56,21 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 }
 
 int main() {
+  int N;
+  cin >> N;
+  int id = 1;
+
+  unordered_map<string, bool> dict;
+  while (N--) {
+    string s;
+    cin >> s;
+    int cnt = dict.count(s);
+    if (!cnt) {
+      cout << id << endl;
+      dict.insert({s, true});
+    }
+    ++id;
+  }
+
   return 0;
 }

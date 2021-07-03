@@ -55,6 +55,24 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int cnt[10000007];
+
 int main() {
+  int N, K;
+  cin >> N >> K;
+  for (int i = 2; i <= N; ++i) {
+    if (cnt[i] == 0) {
+      for (int j = i; j <= N; j += i) {
+        cnt[j] += 1;
+      }
+    }
+  }
+
+  int ans = 0;
+  for (int i = 2; i <= N; ++i) {
+    if (cnt[i] >= K)
+      ans += 1;
+  }
+  cout << ans << endl;
   return 0;
 }

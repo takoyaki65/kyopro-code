@@ -15,7 +15,6 @@
 #include <queue>
 #include <set>
 #include <stack>
-#include <unordered_map>
 #include <vector>
 #define repeat(i, n) for (int i = 0; (i) < (n); ++(i))
 #define repeat_from(i, m, n) for (int i = (m); (i) < (n); ++(i))
@@ -55,6 +54,48 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+long long ans = 0;
+int num[13];
+int elem[13];
+int elem1[13];
+long long N, B;
+long long base[] = {1L,         10L,         100L,         1000L,
+                    10000L,     100000L,     1000000L,     10000000L,
+                    100000000L, 1000000000L, 10000000000L, 100000000000L};
+
+void rec(const int idx, const long long fm) {
+  if (idx >= 12)
+    return;
+  int prev = (idx == 0) ? 0 : num[idx - 1];
+  // idx桁にprev~9の数字を付けていく
+  for (int i = prev; i <= 9; ++i) {
+    num[idx] = i;
+    ++elem[i];
+    long long m = (fm * i) + B;
+    if (i != 0 && 1 <= m && m <= N) {
+      memset(elem1, 0, sizeof(elem1));
+      long long tmp = m;
+      while (tmp) {
+        ++elem1[tmp % 10];
+        tmp /= 10;
+      }
+      bool flg = true;
+      for (int j = 0; j < 13; ++j)
+        if (elem1[j] != elem[j])
+          flg = false;
+      if (flg) {
+        // cout << m << endl;
+        ++ans;
+      }
+    }
+    rec(idx + 1, fm * i);
+    --elem[i];
+  }
+}
+
 int main() {
+  cin >> N >> B;
+  rec(0, 1);
+  cout << ans << endl;
   return 0;
 }
