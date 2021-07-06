@@ -11,13 +11,14 @@ int sgn(const double a) {
   return (a < -eps ? -1 : (a > eps ? +1 : 0));
 }
 
+template <typename Int>
 struct vec_i {
-  int x, y;
+  Int x, y;
   vec_i() : x(0), y(0) {}
-  vec_i(int _x, int _y) : x(_x), y(_y) {}
+  vec_i(Int _x, Int _y) : x(_x), y(_y) {}
   vec_i(const vec_i& rhs) : x(rhs.x), y(rhs.y) {}
-  int& operator[](int idx) { return ((int*)(&x))[idx]; }
-  int operator[](int idx) const { return ((int*)(&x))[idx]; }
+  Int& operator[](int idx) { return ((Int*)(&x))[idx]; }
+  Int operator[](int idx) const { return ((Int*)(&x))[idx]; }
   bool operator==(const vec_i& rhs) const { return x == rhs.x && y == rhs.y; }
   bool operator!=(const vec_i& rhs) const { return !(*this).operator==(rhs); }
   bool operator<(const vec_i& rhs) const {
@@ -40,11 +41,11 @@ struct vec_i {
   vec_i operator-(const vec_i& rhs) const { return vec_i(*this) -= rhs; }
   vec_i operator*(int k) const { return vec_i(*this) *= k; }
 
-  int cross(vec_i rhs) const { return x * rhs.y - y * rhs.x; }
+  Int cross(vec_i rhs) const { return x * rhs.y - y * rhs.x; }
 
-  int dot(vec_i rhs) const { return x * rhs.x + y * rhs.y; }
+  Int dot(vec_i rhs) const { return x * rhs.x + y * rhs.y; }
 
-  int length2() const { return x * x + y * y; }
+  Int length2() const { return x * x + y * y; }
 
   friend ostream& operator<<(ostream& os, const vec_i& p) {
     return os << "(" << p.x << ", " << p.y << ")";
@@ -124,7 +125,8 @@ class Rot {
   Rot(double _rad) : angle_in_radians(_rad) {}
 };
 
-int dot(vec_i a, vec_i b) {
+template <typename Int>
+Int dot(vec_i<Int> a, vec_i<Int> b) {
   return a.x * b.x + a.y * b.y;
 }
 
@@ -132,7 +134,8 @@ double dot(vec_d a, vec_d b) {
   return a.x * b.x + a.y * b.y;
 }
 
-double dist(vec_i a, vec_i b) {
+template <typename Int>
+double dist(vec_i<Int> a, vec_i<Int> b) {
   return hypot(a.x - b.x, a.y - b.y);
 }
 
@@ -140,7 +143,8 @@ double dist(vec_d a, vec_d b) {
   return hypot(a.x - b.x, a.y - b.y);
 }
 
-bool ccw(vec_i p, vec_i q, vec_i r) {
+template <typename Int>
+bool ccw(vec_i<Int> p, vec_i<Int> q, vec_i<Int> r) {
   return (q - p).cross(r - p) > 0;
 }
 
@@ -148,7 +152,8 @@ bool ccw(vec_d p, vec_d q, vec_d r) {
   return (q - p).cross(r - p) > 0.0;
 }
 
-bool collinear(vec_i p, vec_i q, vec_i r) {
+template <typename Int>
+bool collinear(vec_i<Int> p, vec_i<Int> q, vec_i<Int> r) {
   return (q - p).cross(r - p) == 0;
 }
 
@@ -156,7 +161,8 @@ bool collinear(vec_d p, vec_d q, vec_d r) {
   return abs((q - p).cross(r - p)) < eps;
 }
 
-double areaTri(vec_i a, vec_i b, vec_i c) {
+template <typename Int>
+double areaTri(vec_i<Int> a, vec_i<Int> b, vec_i<Int> c) {
   return abs((b - a).cross(c - a)) / 2.0;
 }
 
@@ -177,6 +183,94 @@ double distToLine(vec_d p, vec_d a, vec_d b, vec_d& c) {
   c = a + (ab * u);
   return dist(p, c);
 }
+
+/**
+ * @brief 点群pointsの凸法を計算する
+ *
+ * @tparam Int 整数型(int, long longなど)
+ */
+template <typename Int>
+struct ConvexHull_i {
+  using vec_type = vec_i<Int>;
+  vector<vec_type> points;
+  ConvexHull_i() {}
+
+  void build() {
+    vec_type pivot(0, 0);
+    int i, j, n = (int)points.size();
+    // Special Case: Polygon with 3 points
+    if (n <= 3) {
+      if (!(points[0] == points[n - 1]))
+        points.push_back(points[0]);
+      return;
+    }
+
+    // Find Initial Point: Low Y then Right X
+    int P0 = 0;
+    for (int i = 0; i < n; ++i) {
+      if (points[i].y < points[P0].y ||
+          (points[i].y == points[P0].y && points[i].x > points[P0].x))
+        P0 = i;
+    }
+
+    swap(points[0], points[P0]);
+
+    // second, sort points by angle with pivot P0
+    pivot = points[0];
+
+    auto angleCmp = [&pivot](const vec_type& a, const vec_type& b) -> bool {
+      // special case: if collinear, choose closet to pivot;
+      if (collinear(pivot, a, b))  // special case
+        return (a - pivot).length2() < (b - pivot).length2();
+
+      return (a - pivot).cross(b - pivot) > 0;
+    };
+    sort(++points.begin(), points.end(), angleCmp);
+
+    // S holds the Convex Hull
+    // We initialize it with first three points
+    vector<vec_type> S;
+    S.push_back(points[n - 1]);
+    S.push_back(points[0]);
+    S.push_back(points[1]);
+
+    // We start on the third point
+    i = 2;
+    while (i < n) {
+      j = (int)S.size() - 1;
+      // If the next point is left of CH, keep it.
+      // Else, pop the last CH point and try again.
+
+      // j <= 1 : 得られる点群が全て一直線の場合、
+      //          お互い最も遠い位置に属する2点(points[0]とpoints[1])
+      //          も削除してしまうため、それを防ぐ
+      //          (常に3点は含むようにする)
+      if (j <= 1 || ccw(S[j - 1], S[j], points[i]))
+        S.push_back(points[i++]);
+      else
+        S.pop_back();
+    }
+
+    points = S;
+    return;
+  }
+
+  double area() {
+    double result = 0.0;
+    for (int i = 0; i < (int)points.size() - 1; ++i) {
+      result += points[i].cross(points[i + 1]);
+    }
+    return abs(result) / 2.0;
+  }
+
+  Int area2() {
+    Int result = 0;
+    for (int i = 0; i < (int)points.size() - 1; ++i) {
+      result += points[i].cross(points[i + 1]);
+    }
+    return abs(result);
+  }
+};
 
 struct ConvexHull_d {
   vector<vec_d> points;
@@ -228,7 +322,11 @@ struct ConvexHull_d {
       // If the next point is left of CH, keep it.
       // Else, pop the last CH point and try again.
 
-      if (ccw(S[j - 1], S[j], points[i]))
+      // j <= 1 : 得られる点群が全て一直線の場合、
+      //          お互い最も遠い位置に属する2点(points[0]とpoints[1])
+      //          も削除してしまうため、それを防ぐ
+      //          (常に3点は含むようにする)
+      if (j <= 1 || ccw(S[j - 1], S[j], points[i]))
         S.push_back(points[i++]);
       else
         S.pop_back();
