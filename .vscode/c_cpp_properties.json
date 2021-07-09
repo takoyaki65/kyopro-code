@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/mnt/c/Users/taku65/documents/ac-library"
+                "/home/tk65/ac-library"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

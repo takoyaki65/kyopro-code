@@ -78,7 +78,8 @@
         "iosfwd": "cpp",
         "mutex": "cpp",
         "typeindex": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "stack": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }
