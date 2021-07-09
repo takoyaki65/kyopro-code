@@ -57,5 +57,43 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 }
 
 int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    int N;
+    cin >> N;
+    int lc = 1, rc = N;
+    // lc, lc + 1, lc + 2
+    while (lc + 2 < rc) {
+      int c1 = lc + (rc - lc) / 3;
+      int c2 = rc - (rc - lc) / 3;
+      int f1, f2;
+      cout << "? " << c1 << endl;
+      cin >> f1;
+      cout << "? " << c2 << endl;
+      cin >> f2;
+      if (f1 < f2) {
+        lc = c1;
+      } else {
+        // f1 >= f2
+        rc = c2;
+      }
+    }
+    int ans = 0, fv;
+    cout << "? " << lc << endl;
+    cin >> fv;
+    ans = max(ans, fv);
+    if (lc + 1 <= rc) {
+      cout << "? " << lc + 1 << endl;
+      cin >> fv;
+      ans = max(ans, fv);
+    }
+    if (lc + 2 <= rc) {
+      cout << "? " << rc << endl;
+      cin >> fv;
+      ans = max(ans, fv);
+    }
+    cout << "! " << ans << endl;
+  }
   return 0;
 }

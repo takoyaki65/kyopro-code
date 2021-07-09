@@ -56,6 +56,54 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+// https://qiita.com/tanaka-a/items/f380257328da421c6584
+const int fib[] = {1,  1,  2,   3,   5,   8,   13,  21,   34,
+                   55, 89, 144, 233, 377, 610, 987, 1597, 2584};
+
+int dat[2600];
+
+int Ask(int idx) {
+  if (dat[idx] == -1) {
+    cout << "? " << idx << endl;
+    cin >> dat[idx];
+  }
+  return dat[idx];
+}
+
+void solve() {
+  int N;
+  cin >> N;
+  for (int i = 0; i <= N; ++i)
+    dat[i] = -1;
+  for (int i = N + 1; i < 2600; ++i)
+    dat[i] = -i;
+
+  // 常にright - leftの値をフィボナッチ数にする
+  int left = 0, right = 1957;
+  for (int idx = 16; idx >= 4; --idx) {
+    int c1 = left + fib[idx - 2], c2 = left + fib[idx - 1];
+    int f1 = Ask(c1), f2 = Ask(c2);
+    if (f1 < f2) {
+      left = c1;
+    } else {
+      right = c2;
+    }
+  }
+  assert(right - left == 3);
+  int ans = 0;
+  if (left != 0)
+    ans = max(ans, Ask(left));
+  ans = max(ans, Ask(left + 1));
+  ans = max(ans, Ask(left + 2));
+  ans = max(ans, Ask(left + 3));
+  cout << "! " << ans << endl;
+}
+
 int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    solve();
+  }
   return 0;
 }

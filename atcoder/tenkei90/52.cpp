@@ -13,6 +13,7 @@
 #include <map>
 #include <numeric>
 #include <queue>
+#include <random>
 #include <set>
 #include <stack>
 #include <unordered_map>
@@ -122,40 +123,21 @@ struct Fp {
 const int MOD = 1000000007;
 using mint = Fp<MOD>;
 
-int N, Q;
-int x[51], y[51], z[51];
-long long w[51];
+int N;
+mint Asum[110];
 
 int main() {
-  cin >> N >> Q;
-  repeat(i, Q) cin >> x[i] >> y[i] >> z[i] >> w[i];
-
-  repeat(i, Q)-- x[i], --y[i], --z[i];
-
-  mint ans = 1;
-  for (int bit = 0; bit < 60; ++bit) {
-    mint way = 0;
-    for (int S = 0; S < (1 << N); ++S) {
-      bool flag = true;
-      for (int i = 0; i < Q; ++i) {
-        int a = (S >> x[i]) & 1;
-        int b = (S >> y[i]) & 1;
-        int c = (S >> z[i]) & 1;
-        int d = (w[i] >> bit) & 1;
-        if ((a | b | c) != d) {
-          flag = false;
-          break;
-        }
-      }
-      if (flag)
-        way += 1;
+  cin >> N;
+  repeat(i, N) {
+    Asum[i] = 0;
+    repeat(j, 6) {
+      int aij;
+      cin >> aij;
+      Asum[i] += aij;
     }
-    // cout << "bit: " << bit << endl;
-    // cout << "way: " << way << endl;
-    ans *= way;
   }
-
+  mint ans = 1;
+  repeat(i, N) ans *= Asum[i];
   cout << ans << endl;
-
   return 0;
 }

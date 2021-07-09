@@ -57,5 +57,19 @@ auto vectors(T a, X x, Y y, Zs... zs) {
 }
 
 int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    int N;
+    cin >> N;
+    int ans = -1;
+    for (int i = 1; i <= N; ++i) {
+      cout << "? " << i << endl;
+      int val = 0;
+      cin >> val;
+      ans = max(ans, val);
+    }
+    cout << "! " << ans << endl;
+  }
   return 0;
 }

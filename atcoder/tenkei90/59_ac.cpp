@@ -56,6 +56,45 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int N, M, Q;
+vector<int> In[100005];
+int A[100005], B[100005];
+long long dp[100005];
+
 int main() {
+  cin >> N >> M >> Q;
+  repeat(i, M) {
+    int x, y;
+    cin >> x >> y;
+    --x, --y;
+    In[y].push_back(x);
+  }
+  repeat(i, Q) {
+    cin >> A[i] >> B[i];
+    --A[i], --B[i];
+  }
+
+  for (int i = 0; i * 64 < Q; ++i) {
+    memset(dp, 0, N * sizeof(long long));
+    int left = i * 64;
+    int right = min((i + 1) * 64, Q);
+    // cout << "left: " << left << " right: " << right << endl;
+    for (int j = left; j < right; ++j) {
+      dp[A[j]] |= 1LL << (j - left);
+    }
+    for (int j = 0; j < N; ++j) {
+      for (const int& from : In[j]) {
+        dp[j] |= dp[from];
+      }
+    }
+    for (int j = left; j < right; ++j) {
+      if ((dp[B[j]] >> (j - left)) & 1) {
+        cout << "Yes" << endl;
+      } else {
+        cout << "No" << endl;
+      }
+    }
+  }
+
   return 0;
 }

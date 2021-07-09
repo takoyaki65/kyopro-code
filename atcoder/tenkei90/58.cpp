@@ -56,6 +56,37 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int N;
+long long K;
+int dp[64][100005];
+
+int Calc(int X) {
+  int Y = 0, Z = X;
+  while (Z) {
+    Y += Z % 10;
+    Z /= 10;
+  }
+  return (X + Y) % 100000;
+}
+
 int main() {
+  cin >> N >> K;
+  repeat(i, 100005) dp[0][i] = Calc(i);
+
+  repeat_from(i, 1, 64) {
+    repeat(j, 100005) { dp[i][j] = dp[i - 1][dp[i - 1][j]]; }
+  }
+
+  int ans = N;
+  repeat(i, 64) {
+    if ((K >> i) & 1) {
+      // cout << "i: " << i << endl;
+      // cout << ans << " -> " << dp[i][ans] << endl;
+      ans = dp[i][ans];
+    }
+  }
+
+  cout << ans << endl;
+
   return 0;
 }

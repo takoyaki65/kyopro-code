@@ -56,6 +56,42 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int N, M, Q;
+vector<int> G[100005];
+int A[100005], B[100005];
+bool visit[100005];
+
+void rec(int v) {
+  visit[v] = true;
+  for (const int& to : G[v]) {
+    if (visit[to] == false) {
+      rec(to);
+    }
+  }
+}
+
 int main() {
+  cin >> N >> M >> Q;
+  repeat(i, M) {
+    int x, y;
+    cin >> x >> y;
+    --x, --y;
+    G[x].push_back(y);
+  }
+  repeat(i, Q) {
+    cin >> A[i] >> B[i];
+    --A[i], --B[i];
+  }
+
+  repeat(i, Q) {
+    memset(visit, false, sizeof(visit));
+    rec(A[i]);
+    if (visit[B[i]]) {
+      cout << "Yes" << endl;
+    } else {
+      cout << "No" << endl;
+    }
+  }
+
   return 0;
 }

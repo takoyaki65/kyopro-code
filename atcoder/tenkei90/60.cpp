@@ -56,6 +56,33 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int N;
+int A[300005];
+int LIS[300005];
+int L[300005], R[300005];
+const int INF = 4000000;
+
 int main() {
+  cin >> N;
+  repeat(i, N) cin >> A[i];
+
+  repeat(i, N) LIS[i] = INF;
+  repeat(i, N) {
+    int j = lower_bound(LIS, LIS + N, A[i]) - LIS;
+    LIS[j] = A[i];
+    L[i] = j + 1;
+  }
+  repeat(i, N) LIS[i] = INF;
+  for (int i = N - 1; i >= 0; --i) {
+    int j = lower_bound(LIS, LIS + N, A[i]) - LIS;
+    LIS[j] = A[i];
+    R[i] = j + 1;
+  }
+
+  int ans = 0;
+  for (int i = 0; i < N; ++i)
+    ans = max(ans, L[i] + R[i] - 1);
+  cout << ans << endl;
+
   return 0;
 }

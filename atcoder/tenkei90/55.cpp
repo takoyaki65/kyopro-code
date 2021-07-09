@@ -56,6 +56,35 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int N;
+long long A[110];
+long long P, Q;
+
+int rec(int idx, int cnt, long long val) {
+  if (idx == N) {
+    return (cnt == 5 && val == Q) ? 1 : 0;
+  }
+  if (cnt == 5) {
+    return (val == Q) ? 1 : 0;
+  }
+  // remain = N - idx;
+  // 残り5 - cnt個選ぶ必要がある
+  // remain < 5 - cntの場合、打ち切り
+  if (N - idx < 5 - cnt)
+    return 0;
+
+  int ret = 0;
+  // idx番目を選ばない
+  ret += rec(idx + 1, cnt, val);
+  // idx番目を選ぶ
+  ret += rec(idx + 1, cnt + 1, val * A[idx] % P);
+  return ret;
+}
+
 int main() {
+  cin >> N >> P >> Q;
+  repeat(i, N) cin >> A[i];
+  int ans = rec(0, 0, 1);
+  cout << ans << endl;
   return 0;
 }

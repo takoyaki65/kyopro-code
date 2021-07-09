@@ -56,6 +56,49 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+using Vertex_type = vector<int>;
+using pii = pair<int, int>;
+
+int N, M;
+int vertex_num;
+Vertex_type G[200005];
+int dist[200005];
+
 int main() {
+  cin >> N >> M;
+  vertex_num = N;
+  repeat(i, M) {
+    int K;
+    cin >> K;
+    repeat(i, K) {
+      int R;
+      cin >> R;
+      --R;
+      G[vertex_num].push_back(R);
+      G[R].push_back(vertex_num);
+    }
+    vertex_num += 1;
+  }
+
+  memset(dist, -1, sizeof(dist));
+  queue<int> que;
+  dist[0] = 0;
+  que.push(0);
+  while (!que.empty()) {
+    int v = que.front();
+    que.pop();
+    assert(dist[v] != -1);
+    for (const int& to : G[v]) {
+      if (dist[to] == -1) {
+        dist[to] = dist[v] + 1;
+        que.push(to);
+      }
+    }
+  }
+
+  for (int i = 0; i < N; ++i) {
+    cout << (dist[i] < 0 ? -1 : dist[i] / 2) << endl;
+  }
+
   return 0;
 }

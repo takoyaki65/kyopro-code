@@ -56,6 +56,40 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int N, S;
+bool dp[101][100005];
+int A[101], B[101];
+char ans[102];
+
 int main() {
+  cin >> N >> S;
+  dp[0][0] = true;
+  repeat(i, N) cin >> A[i] >> B[i];
+  repeat(i, N) {
+    repeat_from(j, A[i], S + 1) { dp[i + 1][j] |= dp[i][j - A[i]]; }
+    repeat_from(j, B[i], S + 1) { dp[i + 1][j] |= dp[i][j - B[i]]; }
+  }
+
+  // dp[N][S]から経路復元
+  ans[N] = '\0';
+  int i = N - 1, j = S;
+  while (i >= 0) {
+    if (j >= A[i] && dp[i][j - A[i]]) {
+      ans[i] = 'A';
+      j = j - A[i];
+    } else if (j >= B[i] && dp[i][j - B[i]]) {
+      ans[i] = 'B';
+      j = j - B[i];
+    } else {
+      break;
+    }
+    --i;
+  }
+  if (i >= 0) {
+    cout << "Impossible" << endl;
+  } else {
+    cout << ans << endl;
+  }
+
   return 0;
 }

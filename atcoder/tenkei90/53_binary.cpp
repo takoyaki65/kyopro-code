@@ -56,6 +56,38 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int Ask(int idx) {
+  cout << "? " << idx << endl;
+  int fv;
+  cin >> fv;
+  return fv;
+}
+
 int main() {
+  int T;
+  cin >> T;
+  while (T--) {
+    int N;
+    cin >> N;
+    if (N == 1) {
+      int v = Ask(1);
+      cout << "! " << v << endl;
+      continue;
+    }
+    int lc = 1, rc = N;
+    int ans = 0;
+    for (int i = 0; i < 11; ++i) {
+      int mid = (lc + rc) / 2;
+      int v1 = Ask(mid);
+      int v2 = Ask(mid + 1);
+      int fv = v2 - v1;
+      if (fv > 0)
+        lc = mid;
+      else
+        rc = mid;
+      ans = max({ans, v1, v2});
+    }
+    cout << "! " << ans << endl;
+  }
   return 0;
 }
