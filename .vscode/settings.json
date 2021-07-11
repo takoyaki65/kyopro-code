@@ -79,7 +79,8 @@
         "mutex": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "maxflow": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }
