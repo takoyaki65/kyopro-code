@@ -1,7 +1,62 @@
-#include <bits/stdc++.h>
+#include <algorithm>
+#include <array>
+#include <cassert>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <functional>
+#include <initializer_list>
+#include <iomanip>
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <random>
+#include <set>
+#include <stack>
+#include <unordered_map>
+#include <vector>
+#define repeat(i, n) for (int i = 0; (i) < (n); ++(i))
+#define repeat_from(i, m, n) for (int i = (m); (i) < (n); ++(i))
 using namespace std;
 
-const double eps = 1e-9;
+template <class T>
+inline int sz(T& x) {
+  return x.size();
+}
+
+template <class T>
+inline bool setmax(T& a, T b) {
+  if (a < b) {
+    a = b;
+    return true;
+  }
+  return false;
+}
+
+template <class T>
+inline bool setmin(T& a, T b) {
+  if (a > b) {
+    a = b;
+    return true;
+  }
+  return false;
+}
+
+template <typename T, typename X>
+auto vectors(T a, X x) {
+  return vector<T>(x, a);
+}
+
+template <typename T, typename X, typename Y, typename... Zs>
+auto vectors(T a, X x, Y y, Zs... zs) {
+  auto cont = vectors(a, y, zs...);
+  return vector<decltype(cont)>(x, cont);
+}
+
+const double eps = 1e-4;
 const double pi = acos(-1.0);
 
 // a > 0ならば+1, a == 0ならば0, a <
@@ -41,8 +96,6 @@ struct vec_i {
   vec_i operator-(const vec_i& rhs) const { return vec_i(*this) -= rhs; }
   vec_i operator*(int k) const { return vec_i(*this) *= k; }
 
-  friend vec_i operator*(int k, const vec_i& rhs) { return rhs * k; }
-
   Int cross(vec_i rhs) const { return x * rhs.y - y * rhs.x; }
 
   Int dot(vec_i rhs) const { return x * rhs.x + y * rhs.y; }
@@ -73,7 +126,7 @@ struct vec_d {
   bool operator<=(const vec_d& rhs) const {
     if (abs(x - rhs.x) > eps)
       return x < rhs.x;
-    return abs(y - rhs.y) < eps ? true : y < rhs.y;
+    return y <= rhs.y;
   }
   bool operator>(const vec_d& rhs) const { return !(*this).operator<=(rhs); }
   bool operator>=(const vec_d& rhs) const { return !(*this).operator<(rhs); }
@@ -113,8 +166,8 @@ struct vec_d {
 
 class Rot {
  public:
-  static Rot RotDeg(double _deg) { return Rot(_deg * pi / 180.0); }
-  static Rot RotRad(double _rad) { return Rot(_rad); }
+  static Rot Deg(double _deg) { return Rot(_deg * pi / 180.0); }
+  static Rot Rad(double _rad) { return Rot(_rad); }
 
   vec_d operator*(const vec_d& v) const {
     /* cos -sin   vx
@@ -188,163 +241,53 @@ double distToLine(vec_d p, vec_d a, vec_d b, vec_d& c) {
   return dist(p, c);
 }
 
-/**
- * @brief 点群pointsの凸法を計算する
- *
- * @tparam Int 整数型(int, long longなど)
- */
-template <typename Int>
-struct ConvexHull_i {
-  using vec_type = vec_i<Int>;
-  vector<vec_type> points;
-  ConvexHull_i() {}
+int N;
+vec_d pa[110], pb[110];
+bool used[110];
 
-  void build() {
-    vec_type pivot(0, 0);
-    int i, j, n = (int)points.size();
-    // Special Case: Polygon with 3 points
-    if (n <= 3) {
-      if (!(points[0] == points[n - 1]))
-        points.push_back(points[0]);
-      return;
-    }
+int main() {
+  cin >> N;
+  repeat(i, N) cin >> pa[i].x >> pa[i].y;
+  repeat(i, N) cin >> pb[i].x >> pb[i].y;
 
-    // Find Initial Point: Low Y then Right X
-    int P0 = 0;
-    for (int i = 0; i < n; ++i) {
-      if (points[i].y < points[P0].y ||
-          (points[i].y == points[P0].y && points[i].x > points[P0].x))
-        P0 = i;
-    }
-
-    swap(points[0], points[P0]);
-
-    // second, sort points by angle with pivot P0
-    pivot = points[0];
-
-    auto angleCmp = [&pivot](const vec_type& a, const vec_type& b) -> bool {
-      // special case: if collinear, choose closet to pivot;
-      if (collinear(pivot, a, b))  // special case
-        return (a - pivot).length2() < (b - pivot).length2();
-
-      return (a - pivot).cross(b - pivot) > 0;
-    };
-    sort(++points.begin(), points.end(), angleCmp);
-
-    // S holds the Convex Hull
-    // We initialize it with first three points
-    vector<vec_type> S;
-    S.push_back(points[n - 1]);
-    S.push_back(points[0]);
-    S.push_back(points[1]);
-
-    // We start on the third point
-    i = 2;
-    while (i < n) {
-      j = (int)S.size() - 1;
-      // If the next point is left of CH, keep it.
-      // Else, pop the last CH point and try again.
-
-      // j <= 1 : 得られる点群が全て一直線の場合、
-      //          お互い最も遠い位置に属する2点(points[0]とpoints[1])
-      //          も削除してしまうため、それを防ぐ
-      //          (常に3点は含むようにする)
-      if (j <= 1 || ccw(S[j - 1], S[j], points[i]))
-        S.push_back(points[i++]);
-      else
-        S.pop_back();
-    }
-
-    points = S;
-    return;
+  {
+    // それぞれの重心を引く
+    vec_d g(0, 0);
+    repeat(i, N) g += pa[i];
+    repeat(i, N) pa[i] = N * pa[i] - g;
+    g = vec_d(0, 0);
+    repeat(i, N) g += pb[i];
+    repeat(i, N) pb[i] = N * pb[i] - g;
   }
 
-  double area() {
-    double result = 0.0;
-    for (int i = 0; i < (int)points.size() - 1; ++i) {
-      result += points[i].cross(points[i + 1]);
+  // ピボット点のx座標,y座標はなるべく0でない値にする
+  repeat(i, N) {
+    if (pa[i] != vec_d(0, 0)) {
+      swap(pa[i], pa[0]);
     }
-    return abs(result) / 2.0;
   }
 
-  Int area2() {
-    Int result = 0;
-    for (int i = 0; i < (int)points.size() - 1; ++i) {
-      result += points[i].cross(points[i + 1]);
+  repeat(i, N) {
+    double angle = atan2(pb[i].y, pb[i].x) - atan2(pa[0].y, pa[0].x);
+    Rot rot = Rot::Rad(angle);
+    memset(used, 0, sizeof(used));
+    int cnt = 0;
+    repeat(j, N) {
+      vec_d pt = rot * pa[j];
+      repeat(k, N) {
+        if (pt == pb[k] && used[k] == false) {
+          used[k] = true;
+          cnt += 1;
+          break;
+        }
+      }
     }
-    return abs(result);
-  }
-};
-
-struct ConvexHull_d {
-  vector<vec_d> points;
-  ConvexHull_d() {}
-
-  void build() {
-    vec_d pivot(0, 0);
-    int i, j, n = (int)points.size();
-    // Special Case: Polygon with 3 points
-    if (n <= 3) {
-      if (!(points[0] == points[n - 1]))
-        points.push_back(points[0]);
-      return;
+    if (cnt == N) {
+      cout << "Yes" << endl;
+      return 0;
     }
-
-    // Find Initial Point: Low Y then Right X
-    int P0 = 0;
-    for (int i = 0; i < n; ++i) {
-      if (points[i].y < points[P0].y ||
-          (points[i].y == points[P0].y && points[i].x > points[P0].x))
-        P0 = i;
-    }
-
-    swap(points[0], points[P0]);
-
-    // second, sort points by angle with pivot P0
-    pivot = points[0];
-
-    auto angleCmp = [&pivot](const vec_d& a, const vec_d& b) -> bool {
-      // special case: if collinear, choose closet to pivot;
-      if (collinear(pivot, a, b))  // special case
-        return (a - pivot).length2() < (b - pivot).length2();
-
-      return (a - pivot).cross(b - pivot) > 0;
-    };
-    sort(++points.begin(), points.end(), angleCmp);
-
-    // S holds the Convex Hull
-    // We initialize it with first three points
-    vector<vec_d> S;
-    S.push_back(points[n - 1]);
-    S.push_back(points[0]);
-    S.push_back(points[1]);
-
-    // We start on the third point
-    i = 2;
-    while (i < n) {
-      j = (int)S.size() - 1;
-      // If the next point is left of CH, keep it.
-      // Else, pop the last CH point and try again.
-
-      // j <= 1 : 得られる点群が全て一直線の場合、
-      //          お互い最も遠い位置に属する2点(points[0]とpoints[1])
-      //          も削除してしまうため、それを防ぐ
-      //          (常に3点は含むようにする)
-      if (j <= 1 || ccw(S[j - 1], S[j], points[i]))
-        S.push_back(points[i++]);
-      else
-        S.pop_back();
-    }
-
-    points = S;
-    return;
   }
 
-  double area() {
-    double result = 0.0;
-    for (int i = 0; i < (int)points.size() - 1; ++i) {
-      result += points[i].cross(points[i + 1]);
-    }
-    return abs(result) / 2.0;
-  }
-};
+  cout << "No" << endl;
+  return 0;
+}
