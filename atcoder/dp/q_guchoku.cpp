@@ -58,6 +58,32 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int N;
+long long dp1[200005], dp2[200005];
+int H[200005], A[200005];
+
+// dp[h] := 高さの最大値がhのときのスコア最大値
+
 int main() {
-  return 0;
+  cin >> N;
+  repeat(i, N) cin >> H[i];
+  repeat(i, N) cin >> A[i];
+
+  auto *prev = dp1, *next = dp2;
+  fill(prev, prev + N + 1, -1LL);
+  fill(next, next + N + 1, -1LL);
+  prev[0] = 0;
+  repeat(i, N) {
+    repeat(h, N + 1) {
+      // 花iを選ばないとき
+      next[h] = prev[h];
+    }
+    // 花iを選ぶとき
+    for (int j = 0; j < H[i]; ++j)
+      if (prev[j] != -1)
+        next[H[i]] = max(next[H[i]], prev[j] + A[i]);
+    swap(prev, next);
+  }
+
+  cout << *max_element(prev, prev + N + 1) << endl;
 }

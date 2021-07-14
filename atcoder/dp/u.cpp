@@ -58,6 +58,36 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
+int N;
+int A[20][20];
+// dp[S] := 集合Sをグループ分けするときの最高得点
+long long dp[(1 << 16) + 100];
+
+long long rec(int S) {
+  if (S == 0)
+    return 0;
+  if (dp[S] != -1)
+    return dp[S];
+
+  long long ret = 0;
+  for (int i = 0; i < N; ++i) {
+    for (int j = i + 1; j < N; ++j) {
+      if ((S >> i) & 1 && (S >> j) & 1) {
+        ret += A[i][j];
+      }
+    }
+  }
+
+  for (int T = (S - 1) & S; T > 0; T = (T - 1) & S) {
+    ret = max(ret, rec(S & (~T)) + rec(T));
+  }
+  return dp[S] = ret;
+}
+
 int main() {
-  return 0;
+  cin >> N;
+  repeat(i, N) repeat(j, N) cin >> A[i][j];
+  memset(dp, -1, sizeof(dp));
+
+  cout << rec((1 << N) - 1) << endl;
 }
