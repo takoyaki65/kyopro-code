@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include <atcoder/all>
 #include <bitset>
 #include <cassert>
 #include <cmath>
@@ -58,53 +59,23 @@ auto vectors(T a, X x, Y y, Zs... zs) {
   return vector<decltype(cont)>(x, cont);
 }
 
-int N;
-int K;
-
-const int MAX_N = 6;
-const int MAX_K = 6;
-// min_query[l][r] := arr[l,r)の最小値
-int min_query[10][10];
-int arr[10];
-
-int rec(int cur) {
-  if (cur == N) {
-    for (int l = 0; l < N; ++l) {
-      min_query[l][l + 1] = arr[l];
-    }
-    for (int w = 2; w <= N; ++w) {
-      for (int l = 0; l + w <= N; ++l) {
-        int r = l + w;
-        min_query[l][r] = min(arr[l], min_query[l + 1][r]);
-      }
-    }
-
-    for (int l = 0; l < N; ++l) {
-      for (int r = l + 1; r <= N; ++r) {
-        if (min_query[l][r] * (r - l) > K)
-          return 0;
-      }
-    }
-
-    return 1;
-  }
-
-  int ret = 0;
-  for (int i = 0; i <= K; ++i) {
-    arr[cur] = i;
-    ret += rec(cur + 1);
-  }
-  return ret;
-}
-
 int main() {
-  cin >> N >> K;
-  if (N > MAX_N || K > MAX_K) {
-    cout << "error" << endl;
-    return 0;
+  int n, m;
+  cin >> n >> m;
+  vector<atcoder::modint998244353> a(n), b(m);
+  repeat(i, n) {
+    long long v;
+    cin >> v;
+    a[i] = v;
+  }
+  repeat(i, m) {
+    long long v;
+    cin >> v;
+    b[i] = v;
   }
 
-  cout << rec(0) << endl;
+  auto c = atcoder::convolution(a, b);
+  repeat(i, n + m - 1) cout << c[i].val() << (i == n + m - 2 ? "\n" : " ");
 
   return 0;
 }

@@ -1,5 +1,18 @@
-#include <bits/stdc++.h>
+#include <cassert>
+#include <iostream>
+#include <vector>
 using namespace std;
+
+template <typename T, typename X>
+auto vectors(T a, X x) {
+  return vector<T>(x, a);
+}
+
+template <typename T, typename X, typename Y, typename... Zs>
+auto vectors(T a, X x, Y y, Zs... zs) {
+  auto cont = vectors(a, y, zs...);
+  return vector<decltype(cont)>(x, cont);
+}
 
 // https://github.com/drken1215/algorithm/blob/master/MathCombinatorics/mod.cpp
 template <int MOD>
@@ -55,12 +68,6 @@ struct Fp {
   friend constexpr ostream& operator<<(ostream& os, const Fp<MOD>& x) noexcept {
     return os << x.val;
   }
-  friend constexpr istream& operator>>(istream& is, Fp<MOD>& x) noexcept {
-    long long v{};
-    is >> v;
-    x = Fp<MOD>(v);
-    return is;
-  }
   friend constexpr Fp<MOD> modpow(const Fp<MOD>& a, long long n) noexcept {
     if (n == 0)
       return 1;
@@ -72,43 +79,31 @@ struct Fp {
   }
 };
 
-template <class T>
-struct BiCoef {
-  vector<T> fact_, inv_, finv_;
-  constexpr BiCoef() {}
-  constexpr BiCoef(int n) noexcept : fact_(n, 1), inv_(n, 1), finv_(n, 1) {
-    init(n);
-  }
-  constexpr void init(int n) noexcept {
-    fact_.assign(n, 1), inv_.assign(n, 1), finv_.assign(n, 1);
-    int MOD = fact_[0].getmod();
-    for (int i = 2; i < n; ++i) {
-      fact_[i] = fact_[i - 1] * i;
-      inv_[i] = -inv_[MOD % i] * (MOD / i);
-      finv_[i] = finv_[i - 1] * inv_[i];
+const int MOD = 998244353;
+using mint = Fp<MOD>;
+
+int main() {
+  int N, K;
+  cin >> N >> K;
+  // dp[h][m]: 条件を満たす長さmの数列で、
+  // 値が全てh以上であるものの個数
+  auto dp = vectors(mint(0), K + 2, N + 1);
+  for (int h = 0; h < K + 2; ++h)
+    dp[h][0] = 1;
+
+  for (int h = K; h >= 0; --h) {
+    for (int len = 1; len <= N; ++len) {
+      if (h * len > K)
+        continue;
+
+      // 区間[0, i)が全てh以上,A[i]=h,区間[i+1,len)が全てh+1以上
+      // for (int i = -1; i < len; ++i) {
+      //   dp[h][len] += (i == -1 ? 1 : dp[h][i]) * dp[h + 1][len - i - 1];
+      // }
+      for (int k = 1; k <= len + 1; ++k) {
+        dp[h][len] += dp[h + 1][k - 1] * (len - k < 0 ? 1 : dp[h][len - k]);
+      }
     }
   }
-  constexpr T com(int n, int k) const noexcept {
-    if (n < k || n < 0 || k < 0)
-      return 0;
-    return fact_[n] * finv_[k] * finv_[n - k];
-  }
-  constexpr T fact(int n) const noexcept {
-    if (n < 0)
-      return 0;
-    return fact_[n];
-  }
-  constexpr T inv(int n) const noexcept {
-    if (n < 0)
-      return 0;
-    return inv_[n];
-  }
-  constexpr T finv(int n) const noexcept {
-    if (n < 0)
-      return 0;
-    return finv_[n];
-  }
-};
-
-const int MOD = 1000000007;
-using mint = Fp<MOD>;
+  cout << dp[0][N] << endl;
+}
