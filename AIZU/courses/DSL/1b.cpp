@@ -157,3 +157,26 @@ struct WeightedUnionFind {
    */
   Abel diff(int x, int y) { return weight(y) - weight(x); }
 };
+
+int main() {
+  int n, q;
+  scanf("%d %d", &n, &q);
+  WeightedUnionFind<int> uf(n);
+  while (q--) {
+    int com, x, y, z;
+    scanf("%d %d %d", &com, &x, &y);
+    if (com == 0) {
+      scanf("%d", &z);
+      // a_y is greater than a_x by z
+      uf.merge(x, y, z);
+    } else {
+      if (uf.is_same(x, y)) {
+        // print the difference between a_y and a_x
+        printf("%d\n", uf.diff(x, y));
+      } else {
+        printf("?\n");
+      }
+    }
+  }
+  return 0;
+}
