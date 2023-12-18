@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// ref: https://cp-algorithms.com/graph/edmonds_karp.html
 const int INF = 1e9;
 
 int n;
